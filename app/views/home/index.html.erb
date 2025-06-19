@@ -1,0 +1,55 @@
+
+<% if notice.present? %>
+  <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+<% end %>
+<section id="hero">
+  <div class="flex flex-col items-center px-6 mx-auto mt-10 mb-5 space-y-0 md:flex-row shadow-lg rounded-2xl">
+    <div class="flex flex-col mb-8 space-y-12 md:w-1/2 max-w-auto">
+      <h1 class="max-w-auto text-center text-4xl font-bold md:text-center md:text-5xl">
+        Rent <br>
+        Paying rent or Collecting rent
+      </h1>
+      <div class="prose md:prose-lg items-center text-center clear-right " data-controller="article">
+        <p class = "text-md text-lg font-medium font-sans text-black dark:text-white"> The evolution of rent payment and property management has come for all, whether you're a tenant, agency and even for property owners'. </p>
+      </div>
+      <div class="flex  flex-col gap-3 items-center justify-center md:justify-start">
+        <%= link_to "Pay Rent", root_path, class: "p-3 px-6 pt-2 text-white bg-yublue rounded-full baseline font-semibold hover:bg-primary hover:text-black"%>
+        <%= button_to "Collect Rent", root_path, class: "p-3 px-6 pt-2 text-black bg-yorange rounded-full baseline font-semibold hover:bg-primary hover:text-black"%>
+        <%= button_to "Manange Apartments", root_path, class: "p-3 px-6 pt-2 text-white bg-dune rounded-full baseline font-semibold hover:bg-primary hover:text-black"%>
+      </div>
+    </div>
+    <div class="flex md:block md:w-1/2 rounded-full">
+      <%= image_tag "", class: "max-w-full h-auto" %>
+    </div>
+  </div>
+</section>
+<section class="grid-container grid-cols-1 gap-7 wrapper py-4 lg:py-12 lg:grid-cols-3">
+  <div class = "flex flex-col grow bg-dune justify-center rounded-2xl px-4 py-2 max-w-auto ">
+    <div class="max-w-auto rounded overflow-hidden shadow-lg m-2 ">
+      <%= image_tag "", class: "w-full h-100 object-cover", alt: "inside of a studio apartment" %>
+    </div>
+    <div class = "text-wrap">
+      <h1 class = "text-2xl text-white font-bold text-center">Collect Rent</h1>
+      <p class = "text-lg text-white text-center"> Say goodbye to the hassle of rent collection, track all your payments anywhere, anytime all in one place. </P>
+    </div>
+    <div class = "relative flex flex-col items-center p-3">
+      <%= button_to "Collect rent", root_path, class: "p-4 text-black bg-yorange rounded-full font-semibold hover:bg-primary hover:text-black"%>
+    </div>
+  </div>
+  <div class="flex flex-col items-center justify-center py-10 px-3">
+    <h3 class="text-h2.5 text-center font-serif mb-5"> Where do i find a good apartment to rent</h3>
+    <%= button_to "Collect rent", root_path, class: "p-4 text-black bg-yorange rounded-full font-semibold hover:bg-primary hover:text-black"%>
+  </div>
+  <div class = "flex flex-col grow bg-dune justify-center rounded-2xl px-4 py-2 max-w-auto ">
+    <div class="max-w-auto rounded overflow-hidden shadow-lg m-2 ">
+      <%= image_tag "", class: "w-full h-100 object-cover", alt: "inside of a studio apartment" %>
+    </div>
+    <div class = "text-wrap">
+      <h1 class = "text-2xl text-white font-bold text-center"> Management</h1>
+      <p class = "text-lg text-white text-center"> Simplify all your daily tasks: utility sub-metering, finding new tenants: There is a solution </P>
+    </div>
+    <div class = "relative flex flex-col  items-center p-3">
+      <%= button_to "Manage Property", root_path, class: " p-4 text-black bg-yorange rounded-full font-semibold hover:bg-primary hover:text-black"%>
+    </div>
+  </div>
+</section>
