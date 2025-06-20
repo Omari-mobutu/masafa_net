@@ -1,0 +1,30 @@
+<h1>All RADIUS Profiles</h1>
+
+<% if @profiles.empty? %>
+  <p>No RADIUS profiles found yet.</p>
+  <%= link_to "Create New Profile", new_radprofile_path %>
+<% else %>
+  <table>
+    <thead>
+      <tr>
+        <th>Profile Name</th>
+        <th>Attributes Count</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @profiles.each do |group_name, attributes| %>
+        <tr>
+          <td><%= group_name %></td>
+          <td><%= attributes.count %></td>
+          <td>
+            <%= link_to "View", "#" %> |
+            <%= link_to "Edit", "#" %> | <%# You'll implement edit later %>
+            <%= link_to "Delete", "#" %> <%# You'll implement delete later %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= link_to "Create New Profile", radprofile_new_path %>
+<% end %>
