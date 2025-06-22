@@ -62,6 +62,8 @@ module Radprofile
       nil
     end
 
+    # this is the code to delete radius subscription profiles
+
     def self.delete_profile(group_name)
       delete_sql = <<-SQL
           DELETE FROM radgroupreply
@@ -73,6 +75,23 @@ module Radprofile
     rescue StandardError => e
       Rails.logger.error "Failed to find RADIUS profile '#{group_name}': #{e.message}"
       nil
+    end
+
+    # Now the code to search if radius profile exist
+
+    def self.group_name_exists?(group_name)
+      sql = <<-SQL
+        SELECT EXISTS (
+          SELECT 1 FROM radgroupreply WHERE groupname = ? LIMIT 1
+        ) AS exists_check
+      SQL
+      result = ActiveRecord::Base.connection.select_one(
+        ActiveRecord::Base.send(:sanitize_sql_array, [ sql, group_name ])
+      )
+      result["exists_check"] # Returns true or false
+    rescue StandardError => e
+      Rails.logger.error "Error checking FreeRADIUS group name existence: #{e.message}"
+      false # Assume it doesn't exist on error
     end
   end
 end
