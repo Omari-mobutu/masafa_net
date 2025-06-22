@@ -1,0 +1,32 @@
+<%= form_with(url: radprofile_path(@profile[:group_name]), scope: :radprofile, method: :patch, local: true, class: "contents") do |form| %>
+
+  <div class="my-5">
+    <%= form.label :groupname %>
+    <%= form.text_field :group_name, value: @profile[:group_name], readonly: true, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+  </div>
+  <%=@profile%>
+  <% @profile[:attributes].each do |attr| %>
+    <% case attr[:attribute] %>
+      <% when 'Mikrotik-Rate-Limit' %>
+      <div class="my-5">
+        <%= form.label :rate_limi, "Rate Limit (e.g., 6M/6M)" %>
+        <%= form.text_field :rate_limit, value: attr[:value], class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      </div>
+      <% when 'Session-Timeout' %>
+      <div class="my-5">
+        <%= form.label :session_timeout, "Session Timeout (seconds)" %>
+        <%= form.text_field :session_timeout, value: attr[:value], class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      </div>
+      <% when 'Idle-Timeout' %>
+      <div class="my-5">
+        <%= form.label :idle_timeout, "Idle Timeout (seconds)" %>
+        <%= form.text_field :idle_timeout, value: attr[:value], class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
+      </div>
+    <%end%>
+  <%end%>
+
+
+  <div class="inline">
+    <%= form.submit "Update Profile", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>

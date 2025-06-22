@@ -18,13 +18,17 @@
           <td><%= group_name %></td>
           <td><%= attributes.count %></td>
           <td>
-            <%= link_to "View", "#" %> |
+            <%= link_to "View", radprofile_path(group_name) %> |
             <%= link_to "Edit", "#" %> | <%# You'll implement edit later %>
-            <%= link_to "Delete", "#" %> <%# You'll implement delete later %>
+            <%= button_to radprofile_path(group_name), method: :delete,  data: {turbo_confirm: 'Are you sure you want to delete profile?'} do %>
+        <svg class='w-5 h-5 fill-black dark:fill-white flex-shrink-0  text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white'>
+          <use xlink:href="<%= image_path('remixicon.symbol.svg') %>#ri-delete-bin-6-line"></use>
+        </svg>
+      <%end%>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-  <%= link_to "Create New Profile", radprofile_new_path %>
+  <%= link_to "Create New Profile", new_radprofile_path %>
 <% end %>

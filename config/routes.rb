@@ -1,9 +1,10 @@
 Rails.application.routes.draw do
   root "home#index"
 
-  get "radprofile/new"
-  get "radprofile/show"
-  get "radprofile/index"
+  # get "radprofile/new"
+  # get "radprofile/show"
+  # get "radprofile/index"
+  resources :radprofile, param: :group_name
   post "radprofile", to: "radprofile#create"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

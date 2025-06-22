@@ -1,0 +1,10 @@
+<article class="wrapper grid-container py-12" id="existing-customer">
+  <div class="col-span-full md:col-start-5 md:col-span-4">
+    <h1 class="font-serif text-h4 md:text-h3 text-center items-center"> RADIUS Profile: <%= @profile[:group_name] %><br>
+      <span class ="text-blue-600 text-sm"> Update  details</span> </h1>
+  </div>
+  <div>
+    <%=render "edit_form", profile: @profile.to_a %>
+  </div>
+</article>
+
