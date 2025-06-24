@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  subscription: one
+  phone_number: MyString
+  amount: 9.99
+  client_mac: MyString
+  client_ip: MyString
+  link_login: MyString
+  mpesa_checkout_request_id: MyString
+  mpesa_merchant_request_id: MyString
+  status: MyString
+  payment_details: 
+  username: MyString
+  password_digest: MyString
+  subscription_name: MyString
+
+two:
+  subscription: two
+  phone_number: MyString
+  amount: 9.99
+  client_mac: MyString
+  client_ip: MyString
+  link_login: MyString
+  mpesa_checkout_request_id: MyString
+  mpesa_merchant_request_id: MyString
+  status: MyString
+  payment_details: 
+  username: MyString
+  password_digest: MyString
+  subscription_name: MyString

@@ -64,3 +64,7 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+
+# generate singed tokens using rails credentials
+gem "jwt", "~> 3.0"

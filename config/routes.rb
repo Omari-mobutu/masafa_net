@@ -4,8 +4,17 @@ Rails.application.routes.draw do
   # get "radprofile/new"
   # get "radprofile/show"
   # get "radprofile/index"
+  #
+  get "/hotspot/new", to: "hotspot#new", as: :hotspot_new
+  post "/hotspot/choose_subscription", to: "hotspot#choose_subscription", as: :hotspot_choose_subscription
+  get "/hotspot/waiting", to: "hotspot#waiting", as: :hotspot_waiting # For payment waiting page
+
+  # M-Pesa callback endpoint (this needs to be publicly accessible)
   resources :radprofile, param: :group_name
   post "radprofile", to: "radprofile#create"
+
+  # the route for mpesa API
+  post "/webhooks/mpesa", to: "payments#create"
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

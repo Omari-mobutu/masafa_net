@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_22_145746) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_23_145530) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -28,6 +28,33 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_145746) do
 
   create_table "nasreload", primary_key: "nasipaddress", id: :inet, force: :cascade do |t|
     t.timestamptz "reloadtime", null: false
+  end
+
+  create_table "payment_callbacks", force: :cascade do |t|
+    t.jsonb "data"
+    t.string "status", default: "pending", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "payment_transactions", force: :cascade do |t|
+    t.bigint "subscription_id", null: false
+    t.string "phone_number", null: false
+    t.decimal "amount", precision: 10, scale: 2, null: false
+    t.string "client_mac", null: false
+    t.string "client_ip", null: false
+    t.string "link_login", null: false
+    t.string "mpesa_checkout_request_id"
+    t.string "mpesa_merchant_request_id"
+    t.string "status", default: "pending", null: false
+    t.jsonb "payment_details", default: {}
+    t.string "username"
+    t.string "password_digest"
+    t.string "subscription_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mpesa_checkout_request_id"], name: "index_payment_transactions_on_mpesa_checkout_request_id", unique: true
+    t.index ["subscription_id"], name: "index_payment_transactions_on_subscription_id"
   end
 
   create_table "radacct", primary_key: "radacctid", force: :cascade do |t|
@@ -128,4 +155,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_22_145746) do
     t.index ["freeradius_group_name"], name: "index_subscriptions_on_freeradius_group_name"
     t.index ["name"], name: "index_subscriptions_on_name", unique: true
   end
+
+  add_foreign_key "payment_transactions", "subscriptions"
 end
