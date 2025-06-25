@@ -1,7 +1,7 @@
 # app/services/radprofile/create_user.rb
 module Radprofile
   class CreateUser < ApplicationService
-    def initialize(username:, password:, group_name:)
+    def initialize(username, password, group_name)
       @username = username
       @password = password # Plain text password to be hashed before storing
       @group_name = group_name
