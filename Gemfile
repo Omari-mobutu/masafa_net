@@ -68,3 +68,7 @@ end
 
 # generate singed tokens using rails credentials
 gem "jwt", "~> 3.0"
+# create database backed session for user
+gem "activerecord-session_store"
+# perform http api request
+gem "httparty", "~> 0.23.1"

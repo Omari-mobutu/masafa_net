@@ -13,17 +13,16 @@ module Mpesa::Values
         "PhoneNumber": "#{@phone}",
         "CallBackURL": "#{@CallBackURL}",
         "AccountReference": "#{@order}",
-        "TransactionDesc": "Payment of order #{@order} to Nairobiauto.com"
+        "TransactionDesc": "Payment of internet subscription #{@order} to masafa technologies"
       }
   end
 
   def timestamp
-    Time.now.strftime('%Y%m%d%H%M%S').to_i
+    Time.now.strftime("%Y%m%d%H%M%S").to_i
   end
 
 
   def password
     Base64.strict_encode64("#{@paybill}#{@api_key}#{timestamp}")
   end
-
 end

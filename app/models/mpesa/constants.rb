@@ -8,7 +8,7 @@ module Mpesa::Constants
     @api_key = Rails.configuration.mpesa[:api_key]
     @consumer_secret = Rails.configuration.mpesa[:consumer_secret]
     @consumer_key = Rails.configuration.mpesa[:consumer_key]
-    @amount = amount
+    @amount = amount.truncate()
     @phone = phone_number.tap { |k| k[0] = "254" }
     @order = account_name
     @client_mac = client_mac

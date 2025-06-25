@@ -7,21 +7,12 @@ class Mpesa::StkPush
   def call(values, token)
     response = request(:post, token, values)
     parsed_body = JSON.parse(response.read_body)
+    puts parsed_body
+    puts "this is the responce code #{parsed_body["ResponseCode"]}"
 
     if parsed_body["ResponseCode"] == "0"
-      transaction = PaymentTransaction.create!(
-      subscription_id: @subscription_id,
-      phone_number: @phone_number,
-      amount: @amount,
-      client_mac: @client_mac,
-      client_ip: @client_ip,
-      link_login: @link_login,
-      status: :pending,
-      subscription_name: @order,
-      mpesa_checkout_request_id: parsed_body["CheckoutRequestID"],
-      mpesa_merchant_request_id: parsed_body["MerchantRequestID"]
-      )
-      { success: true, message: parsed_body["ResponseDescription"], transaction_id: transaction.id }
+
+      { success: true, message: parsed_body["ResponseDescription"], checkout_request_id: parsed_body["CheckoutRequestID"], merchant_request_id: parsed_body["MerchantRequestID"] }
     else
       { success: false, message: parsed_body["ResponseDescription"] || "Failed to initiate payment." }
 
