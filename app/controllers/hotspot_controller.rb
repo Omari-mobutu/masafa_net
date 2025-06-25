@@ -4,9 +4,9 @@ class HotspotController < ApplicationController
   # e.g., accessible via /hotspot/login or root_path
   def new
     # Capture params from MikroTik
-    @client_mac = params[:mac]
-    @client_ip = params[:ip]
-    @link_login = params[:"link-login"] # Essential for final redirect back to MikroTik
+    @client_mac = params[:mac] || session[:client_mac]
+    @client_ip = params[:ip] || session[:client_ip]
+    @link_login = params[:"link-login"] || session[:link_login] # Essential for final redirect back to MikroTik
 
 
     # Store essential MikroTik context in the session
