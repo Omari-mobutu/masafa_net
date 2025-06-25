@@ -11,7 +11,8 @@ class Mpesa
   # @token = Mpesa::Authorization.new(@api_key, @consumer_secret).call
 
   def push
-    @token = Mpesa::Authorization.new(@consumer_key, @consumer_secret).call
+    @token = Mpesa::Authorization.new().call
+    puts @token
     @response = Mpesa::StkPush.new().call(values, @token)
   end
 end
