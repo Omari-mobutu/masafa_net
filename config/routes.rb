@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get "/hotspot/new", to: "hotspot#new", as: :hotspot_new
   post "/hotspot/choose_subscription", to: "hotspot#choose_subscription", as: :hotspot_choose_subscription
   get "/hotspot/waiting", to: "hotspot#waiting", as: :hotspot_waiting # For payment waiting page
+  get "/hotspot/payment_status", to: "hotspot#payment_status", as: :hotspot_payment_status
 
   # M-Pesa callback endpoint (this needs to be publicly accessible)
   resources :radprofile, param: :group_name

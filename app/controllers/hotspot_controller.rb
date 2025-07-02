@@ -98,10 +98,48 @@ class HotspotController < ApplicationController
     # Render a page that tells user to wait for payment confirmation
     # You might use JavaScript here to poll your server for payment status
     # or rely purely on the M-Pesa callback.
+    # # Check status. If successful, prepare for redirect
+    if @transaction.successful? && @transaction.username.present?
+      # If payment and provisioning are done, redirect immediately
+      # This might happen if the callback was super fast or on a refresh
+      # Pass the generated username/password to MikroTik's login URL
+      redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
+      nil
+    end
+  end
+
+  def payment_status
+    @transaction = PaymentTransaction.find_by(id: params[:transaction_id])
+
+    if @transaction && @transaction.successful? && @transaction.username.present?
+      # If payment is successful, send a Turbo Stream redirect
+      # This will replace the content of 'redirection_target' with a script that redirects
+      render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: build_mikrotik_login_url(@transaction) })
+      # Or, if you want the whole page to redirect directly, you can use:
+      # redirect_to build_mikrotik_login_url(@transaction), status: :see_other # or :found, :temporary_redirect
+    else
+      # Still pending or failed, render an empty frame or just status text
+      render turbo_stream: turbo_stream.update("payment_status", "<p class='text-blue-500'>Still pending ayee...</p>")
+    end
   end
 
 
   private
+
+  def build_mikrotik_login_url(transaction)
+    # MikroTik's login URL (e.g., http://192.168.88.1/login)
+    link_login_base = transaction.link_login.split("?").first # Get base URL if it had extra params
+
+    # Construct the final login URL with username/password
+    # This is highly dependent on your MikroTik's Hotspot login setup.
+    # It might be `login?username=...&password=...` or `login?mk_username=...`
+    # Common is to POST to it, but you can sometimes GET with params for auto-login.
+    # For auto-login from your app, this is common:
+    "#{link_login_base}?username=#{URI.encode_www_form_component(transaction.username)}&password=#{URI.encode_www_form_component(transaction.password_digest)}&dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])}" # Pass original destination back
+    # If using /login?chap-id=... /login?chap-challenge=...
+    # you might need to auto-submit a form via JS, or direct user to log in manually.
+    # The simplest is if MikroTik accepts username/password directly in query params for auto-login.
+  end
 
   def hotspot_params
     params.require(:hotspot).permit(:subscription_id, :phone_number)

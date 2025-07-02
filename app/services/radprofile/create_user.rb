@@ -29,7 +29,7 @@ module Radprofile
         # 1. Insert into radcheck (username and password)
         sql_radcheck = <<-SQL
           INSERT INTO radcheck (username, attribute, op, value)
-          VALUES (?, 'User-Password', ':=', ?)
+          VALUES (?, 'Cleartext-Password', ':=', ?)
         SQL
         # Using '!=' for op and value for password (with Auth-Type := Local) allows FreeRADIUS
         # to store hashed passwords using {crypt} or {md5} and verify them.
