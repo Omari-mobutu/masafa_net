@@ -84,10 +84,14 @@ test:
 #
 production:
   primary: &primary_production
-    <<: *default
+    adapter: postgresql
+    encoding: unicode
+    host: <%= ENV.fetch("DB_HOST") { "127.0.0.1" } %>
+    username: deploy
+    port: 5432
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
     database: radius_production
-    username: radius
-    password: <%= ENV["RADIUS_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: radius_production_cache
