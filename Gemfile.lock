@@ -415,7 +415,7 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   jwt (~> 3.0)
-  kamal
+  kamal (~> 2.3)
   pg (~> 1.1)
   propshaft
   puma (>= 5.0)
