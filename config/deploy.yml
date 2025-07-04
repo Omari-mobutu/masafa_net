@@ -114,43 +114,8 @@ accessories:
         POSTGRES_DB: "radius_production"
       secret:
         - POSTGRES_PASSWORD
-    files:
-      - config/init.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
       - data:/var/lib/postgresql/data
-
-
-  freeradius:
-    image: masafanet/freeradius_hotspot:latest
-    dockerfile: ./freeradius.Dockerfile # Image built from freeradius.Dockerfile
-    ports:
-      - 1812:1812/udp  # Map host port 1812 UDP to container port 1812
-      - 1813:1813/udp  # Map host port 1813 UDP to container port 1813
-    env:
-      # These environment variables are for the FreeRADIUS container
-      # They will be picked up by your docker-entrypoint.sh and substituted into configs
-      clear:
-        DB_HOST: radius-database # <--- IMPORTANT: 'database' is the service name for the PostgreSQL accessory
-        DB_PORT: 5432
-        POSTGRES_DB: "radius_production"
-      secret:
-        - POSTGRES_USER
-        - POSTGRES_PASSWORD
-
-      #SQL_DB_USER: <%= ENV.fetch("RADIUS_DB_USER") %> # From your Kamal secrets/env
-      #SQL_DB_PASSWORD: <%= ENV.fetch("RADIUS_DB_PASSWORD") %> # From your Kamal secrets/env
-      #SQL_DB_NAME: radius_production # <--- Matches POSTGRES_DB in the 'database' accessory
-      #RADIUS_SHARED_SECRET: <%= ENV.fetch("RADIUS_SHARED_SECRET") %>
-      #RADIUS_HEALTHCHECK_SECRET: <%= ENV.fetch("RADIUS_HEALTHCHECK_SECRET") %> # For the healthcheck
-    healthcheck:
-      cmd: "radtest healthcheck_user healthcheck_password 127.0.0.1 1812 ${RADIUS_SHARED_SECRET}" # Use a dedicated healthcheck user
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    # If you need persistent logs outside the container
-    # volumes:
-    #   - /var/log/freeradius:/var/log/freeradius
-
 
 # accessories:
 #   db:
