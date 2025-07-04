@@ -2,7 +2,7 @@
 service: radius
 
 # Name of the container image.
-image: masafanet/radius
+image: masafanet/hotspot
 
 # Deploy to these servers.
 servers:
