@@ -110,8 +110,6 @@ builder:
 accessories:
   database:
     image: pgvector/pgvector:pg16
-    host: 192.168.2.11
-    port: "5432"
     env:
       clear:
         POSTGRES_USER: "deploy"
