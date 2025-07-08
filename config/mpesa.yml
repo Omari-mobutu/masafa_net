@@ -4,7 +4,7 @@ production:
   consumer_key: "EnqlCHUlJIe0e7taDLgJ1WeNFtaGaT0It280fOVQ6lXDMnFF"
   consumer_secret:  "gQnKbJlxXVngqe1WI139gKiH3lGOhkn3jYMxZAMbGPJSUd55pQQDEKpBhIHFWtxG"
   api_key: <%= ENV["MPESA_API_KEY"]%>
-  callback_url: "https://yurento.com/webhooks/mpesa"
+  callback_url: "https://net.yurento.com/webhooks/mpesa"
   api_url: "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
   api_query_url: "https://api.safaricom.co.ke/mpesa/stkpushquery/v1/query"
   authorization_url: "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
