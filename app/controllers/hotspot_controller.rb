@@ -108,84 +108,22 @@ class HotspotController < ApplicationController
     end
   end
 
-  # def payment_status
-  #  @transaction = PaymentTransaction.find_by(id: params[:transaction_id])
-
-  #  if @transaction && @transaction.successful? && @transaction.username.present?
-  # If payment is successful, send a Turbo Stream redirect
-  # This will replace the content of 'redirection_target' with a script that redirects
-  #    render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: #build_mikrotik_login_url(@transaction) })
-
-  #     puts build_mikrotik_login_url(@transaction)
-  # Or, if you want the whole page to redirect directly, you can use:
-  # redirect_to build_mikrotik_login_url(@transaction), status: :see_other # or :found, :temporary_redirect
-  #  else
-  # Still pending or failed, render an empty frame or just status text
-  #    render turbo_stream: turbo_stream.update("payment_status", "<p class='text-blue-500'>Still pending ayee...</p>")
-  #  end
-  # end
-
   def payment_status
     @transaction = PaymentTransaction.find_by(id: params[:transaction_id])
 
-    # Initialize default values for the JSON response
-    status = "pending"
-    message = "Please check your phone for the M-Pesa prompt and approve the payment."
-    is_redirect_ready = false
-    redirect_url = nil
+    if @transaction && @transaction.successful? && @transaction.username.present?
+      # If payment is successful, send a Turbo Stream redirect
+      # This will replace the content of 'redirection_target' with a script that redirects
+      render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: build_mikrotik_login_url(@transaction) })
 
-    if @transaction
-      if @transaction.successful? && @transaction.username.present?
-        status = "completed"
-        message = "Payment successful! Internet access granted. Redirecting you now..."
-        is_redirect_ready = true
-
-        # IMPORTANT: Build the Mikrotik login URL here.
-        # This is the URL that the *client's browser* will be redirected to
-        # after your Rails app confirms payment.
-        # Ensure build_mikrotik_login_url(@transaction) returns a full, absolute URL.
-        # For a Mikrotik hotspot, this would typically be the router's login URL
-        # with username/password, or a simple success page.
-        # As discussed, consider where you *really* want the user to end up.
-        # If your 'dst' logic in Mikrotik is good, sometimes a simple success page
-        # from your Rails app is enough, and Mikrotik handles the final 'dst' redirect.
-        # But if your app needs to drive the post-payment login, this URL is key.
-
-        # Example assuming build_mikrotik_login_url provides the correct path:
-        redirect_url = build_mikrotik_login_url(@transaction)
-
-        # Log the URL for debugging purposes (optional)
-        puts "Redirect URL generated: #{redirect_url}"
-
-      elsif @transaction.failed?
-        status = "failed"
-        message = "Payment failed. Please try again."
-        # You might add logic here to provide a link back to the payment initiation page
-      else
-        # Still pending or other non-successful status
-        status = "pending"
-        message = "Waiting for M-Pesa confirmation please enter you mpesa PIN..."
-      end
+      puts build_mikrotik_login_url(@transaction)
+      # Or, if you want the whole page to redirect directly, you can use:
+      # redirect_to build_mikrotik_login_url(@transaction), status: :see_other # or :found, :temporary_redirect
     else
-      # Transaction not found
-      status = "error"
-      message = "Transaction not found. Please contact support."
+      # Still pending or failed, render an empty frame or just status text
+      render turbo_stream: turbo_stream.update("payment_status", "<p class='text-blue-500'>Still pending ayee...</p>")
     end
-
-
-    respond_to do |format|
-      format.json {
-        render json: {
-          status: status,
-          message: message,
-          is_redirect_ready: is_redirect_ready,
-          redirect_url: redirect_url
-        }
-      }
-      # REMOVE or comment out any 'format.turbo_stream' blocks for this action
-      # format.turbo_stream { ... (your old turbo stream logic) ... }
-    end
-end
+  end
 
 
   private
@@ -202,7 +140,7 @@ end
     # Common is to POST to it, but you can sometimes GET with params for auto-login.
     # For auto-login from your app, this is common:
     "#{link_login_base}?username=#{URI.encode_www_form_component(transaction.username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(transaction.username).call)}" # Pass original destination back
-    ### &dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])} the dst removed on the redirecting link
+    ### &dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])} the dst removed on the redirecting
 
     # If using /login?chap-id=... /login?chap-challenge=...
     # you might need to auto-submit a form via JS, or direct user to log in manually.
