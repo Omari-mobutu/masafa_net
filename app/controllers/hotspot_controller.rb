@@ -139,7 +139,8 @@ class HotspotController < ApplicationController
     # It might be `login?username=...&password=...` or `login?mk_username=...`
     # Common is to POST to it, but you can sometimes GET with params for auto-login.
     # For auto-login from your app, this is common:
-    "#{link_login_base}?username=#{URI.encode_www_form_component(transaction.username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(transaction.username).call)}&dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])}" # Pass original destination back
+    "#{link_login_base}?username=#{URI.encode_www_form_component(transaction.username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(transaction.username).call)}" # Pass original destination back
+    ### &dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])} the dst removed on the redirecting link
 
     # If using /login?chap-id=... /login?chap-challenge=...
     # you might need to auto-submit a form via JS, or direct user to log in manually.
