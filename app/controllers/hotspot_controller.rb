@@ -115,6 +115,8 @@ class HotspotController < ApplicationController
       # If payment is successful, send a Turbo Stream redirect
       # This will replace the content of 'redirection_target' with a script that redirects
       render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: build_mikrotik_login_url(@transaction) })
+
+      puts build_mikrotik_login_url(@transaction)
       # Or, if you want the whole page to redirect directly, you can use:
       # redirect_to build_mikrotik_login_url(@transaction), status: :see_other # or :found, :temporary_redirect
     else
@@ -129,6 +131,8 @@ class HotspotController < ApplicationController
   def build_mikrotik_login_url(transaction)
     # MikroTik's login URL (e.g., http://192.168.88.1/login)
     link_login_base = transaction.link_login.split("?").first # Get base URL if it had extra params
+    puts "the lick to redirect #{link_login_base}"
+    puts Radprofile::GetPassword.new(transaction.username).call
 
     # Construct the final login URL with username/password
     # This is highly dependent on your MikroTik's Hotspot login setup.
@@ -136,6 +140,7 @@ class HotspotController < ApplicationController
     # Common is to POST to it, but you can sometimes GET with params for auto-login.
     # For auto-login from your app, this is common:
     "#{link_login_base}?username=#{URI.encode_www_form_component(transaction.username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(transaction.username).call)}&dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])}" # Pass original destination back
+
     # If using /login?chap-id=... /login?chap-challenge=...
     # you might need to auto-submit a form via JS, or direct user to log in manually.
     # The simplest is if MikroTik accepts username/password directly in query params for auto-login.
