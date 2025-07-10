@@ -1,28 +1,93 @@
 <section class="bg-white dark:bg-gray-900">
     <div class="min-h-screen flex items-center justify-center bg-gray-100">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4">Payment In Progress...</h1>
-            <p class="text-gray-600 mb-6">Please check your phone for the M-Pesa prompt and approve the payment.</p>
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Payment In Progress...</h1>
+        <p class="text-gray-600 mb-6">Please check your phone for the M-Pesa prompt and approve the payment.</p>
 
-            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto mb-6"></div>
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mx-auto mb-6"></div>
 
-            <p class="text-gray-700 font-semibold mb-2">Waiting for M-Pesa confirmation...</p>
-            <p class="text-gray-500 text-sm">Do not close this page.</p>
+        <%# Added an ID to this paragraph to dynamically update its content %>
+        <p id="dynamic-payment-status" class="text-gray-700 font-semibold mb-2">Waiting for M-Pesa confirmation...</p>
+        <p class="text-gray-500 text-sm">Do not close this page.</p>
 
-            <div data-controller="polling"
-            data-polling-url-value="<%= hotspot_payment_status_path(transaction_id: @transaction.id) %>"
-            data-polling-interval-value="3000"> <%# Poll every 3 seconds %>
-                <%# Turbo Frame to poll for status updates %>
-                <%= turbo_frame_tag "payment_status" do %>
-                    <%# Initial content for the frame while waiting %>
-                    <p class="text-blue-500">Connecting to payment gateway...</p>
-                <% end %>
+        <%# The div that previously held the Stimulus controller's data attributes %>
+        <%# Now it will just contain our inline JavaScript %>
+        <div>
+            <%# Hidden div that Turbo Stream might have targeted - this can largely be ignored or removed %>
+            <%# The inline script will handle the redirect directly %>
+            <div id="redirection_target" style="display: none;"></div>
 
-                <%# Hidden div that Turbo Stream might target for redirection %>
-                <div id="redirection_target"></div>
-            </div>
+            <script>
+              // Configuration values from your Rails backend
+              // This is equivalent to your data-polling-url-value
+              const pollingUrl = "<%= hotspot_payment_status_path(transaction_id: @transaction.id, format: :json) %>";
+              const pollingInterval = 3000; // Poll every 3 seconds
+
+              let pollingIntervalId; // To store the interval ID for clearing
+
+              function fetchPaymentStatus() {
+                // We no longer rely on a 'redirection_target' child, the script will handle the redirect directly
+                // No need to check hasChildNodes() here based on previous logic
+
+                console.log("Polling for payment status...");
+                fetch(pollingUrl, {
+                  headers: {
+                    'Accept': 'application/json' // Crucial: Tell server we expect JSON, not Turbo Stream
+                  }
+                })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                  }
+                  return response.json(); // Parse as JSON
+                })
+                .then(data => {
+                  console.log("Received data:", data);
+
+                  const statusMessageElement = document.getElementById('dynamic-payment-status');
+                  if (statusMessageElement) {
+                    statusMessageElement.textContent = data.message; // Update message directly
+                  }
+
+                  if (data.is_redirect_ready && data.redirect_url) {
+                    console.log("Redirecting to:", data.redirect_url);
+                    stopPolling(); // Stop polling before redirect
+                    window.location.href = data.redirect_url; // Perform the redirect
+                  }
+                })
+                .catch(error => {
+                  console.error("Polling fetch error:", error);
+                  const statusMessageElement = document.getElementById('dynamic-payment-status');
+                  if (statusMessageElement) {
+                    statusMessageElement.textContent = 'Error checking status. Please refresh or try again.';
+                    statusMessageElement.style.color = 'red';
+                  }
+                  stopPolling(); // Stop polling on error
+                });
+              }
+
+              function startPolling() {
+                stopPolling(); // Ensure no duplicate intervals
+                fetchPaymentStatus(); // Initial check
+                pollingIntervalId = setInterval(fetchPaymentStatus, pollingInterval); // Then set up interval
+              }
+
+              function stopPolling() {
+                if (pollingIntervalId) {
+                  clearInterval(pollingIntervalId);
+                  pollingIntervalId = null;
+                }
+              }
+
+              // Start polling when the DOM is fully loaded
+              document.addEventListener('DOMContentLoaded', startPolling);
+
+              // Basic cleanup if the user navigates away before polling stops
+              window.addEventListener('beforeunload', stopPolling);
+            </script>
         </div>
     </div>
+</div>
 
     <div class="py-8 lg:py-16 mx-auto max-w-screen-xl px-4">
         <h2 class="mb-8 lg:mb-16 text-3xl font-extrabold tracking-tight leading-tight text-center text-gray-900 dark:text-white md:text-4xl">You’ll be in good company</h2>
