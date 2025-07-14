@@ -1,4 +1,15 @@
 <%# app/views/hotspot/_redirect_script.html.erb %>
+<!--
 <script type="text/javascript">
   window.location.href = "<%= j url %>";
+</script>
+-->
+
+
+<%# app/views/hotspot/_redirect_script.html.erb %>
+<script type="text/javascript">
+  // Add a short delay (e.g., 2-5 seconds) before redirecting
+  setTimeout(function() {
+    window.location.href = "<%= url %>";
+  }, 3000); // 3000 milliseconds = 3 seconds
 </script>
