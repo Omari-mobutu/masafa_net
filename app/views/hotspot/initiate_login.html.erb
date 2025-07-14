@@ -1,0 +1,37 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+  <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Account Ready!</h1>
+    <p class="text-gray-600 mb-6">
+      Your account for <span class="font-semibold text-blue-600"><%= @username %></span> has been successfully created and configured.
+    </p>
+    <p class="text-gray-600 mb-8">
+      Please click the button below to proceed to the hotspot login page.
+    </p>
+
+    <%# The form will POST to the MikroTik Hotspot login page %>
+    <%# Ensure the MikroTik Hotspot is configured to accept POST requests for login %>
+    <form action="<%= @hotspot_login_url %>" method="post" class="space-y-4">
+      <!--
+        WARNING: Passing passwords in hidden fields is generally NOT recommended
+        for security reasons if the page itself is not HTTPS.
+        Ideally, the user types the password into the MikroTik's page.
+        However, if your MikroTik expects pre-filled fields or you're using
+        a specific API, this is how you'd pass them.
+        For Hotspot, often the MikroTik captures username/password directly.
+        If you generated the password and need to pass it, you'd retrieve it here:
+      -->
+
+      <input type="hidden" name="username" value="<%= @username %>">
+      <input type="hidden" name="password" value="<%= RadProfile::GetPassword.new(@username).call %>">
+
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out">
+        Go to Hotspot Login
+      </button>
+    </form>
+
+    <p class="text-sm text-gray-500 mt-6">
+      If you encounter any issues, please contact support.
+    </p>
+  </div>
+</div>
