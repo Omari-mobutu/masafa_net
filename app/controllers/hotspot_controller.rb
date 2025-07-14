@@ -103,12 +103,14 @@ class HotspotController < ApplicationController
       # If payment and provisioning are done, redirect immediately
       # This might happen if the callback was super fast or on a refresh
       # Pass the generated username/password to MikroTik's login URL
-      redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
+      # redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
+      redirect_to initiate_login_url(transaction_id: @transaction.id)
     end
   end
 
-  def initiate_hotspot_login
-    username = params[:username] # Or retrieve from session/current_user
+  def initiate_login
+    @transaction = PaymentTransaction.find(params[:transaction_id])
+    username = @transaction.username # Or retrieve from session/current_user
 
     # Assuming the password generation and radcheck/radusergroup insertion
     # happens BEFORE this action, or in a background job that completes quickly.
@@ -116,10 +118,10 @@ class HotspotController < ApplicationController
 
     @username = username
     # You might also want to pass other info to the view, like hotspot URL
-    @hotspot_login_url = "http://192.168.20.1/login" # Replace with your MikroTik Hotspot login URL
+    @hotspot_login_url = @transaction.link_login.split("?").first # Replace with your MikroTik Hotspot login URL
 
     # Render a view that contains the button
-    render "initiate_hotspot_login"
+    render "initiate_login"
   end
 
   def payment_status
