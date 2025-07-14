@@ -135,7 +135,8 @@ class HotspotController < ApplicationController
 
       # Instead of rendering a partial with JS for external redirect,
       # render a Turbo Stream action that triggers a full page visit to the 'waiting' action.
-      render turbo_stream: turbo_stream.action(:turbo_visit, hotspot_waiting_path(transaction_id: @transaction.id))
+      # render turbo_stream: turbo_stream.action(:turbo_visit, url: hotspot_waiting_path(transaction_id: @transaction.id))
+      render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: hotspot_waiting_path(transaction_id: @transaction.id) })
 
 
       # Or, if you want the whole page to redirect directly, you can use:
