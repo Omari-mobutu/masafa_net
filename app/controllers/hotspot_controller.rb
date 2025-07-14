@@ -103,8 +103,8 @@ class HotspotController < ApplicationController
       # If payment and provisioning are done, redirect immediately
       # This might happen if the callback was super fast or on a refresh
       # Pass the generated username/password to MikroTik's login URL
-      # redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
-      redirect_to initiate_login_url(transaction_id: @transaction.id)
+      redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
+      # redirect_to initiate_login_url(transaction_id: @transaction.id)
     end
   end
 
@@ -130,8 +130,12 @@ class HotspotController < ApplicationController
     if @transaction && @transaction.successful? && @transaction.username.present?
       # If payment is successful, send a Turbo Stream redirect
       # This will replace the content of 'redirection_target' with a script that redirects
-      puts build_mikrotik_login_url(@transaction)
-      render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: build_mikrotik_login_url(@transaction) })
+      # puts build_mikrotik_login_url(@transaction)
+      # render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: build_mikrotik_login_url(@transaction) })
+
+      # Instead of rendering a partial with JS for external redirect,
+      # render a Turbo Stream action that triggers a full page visit to the 'waiting' action.
+      render turbo_stream: turbo_stream.action(:turbo_visit, waiting_path(transaction_id: @transaction.id))
 
 
       # Or, if you want the whole page to redirect directly, you can use:
