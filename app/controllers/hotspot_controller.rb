@@ -130,9 +130,11 @@ class HotspotController < ApplicationController
     if @transaction && @transaction.successful? && @transaction.username.present?
       # If payment is successful, send a Turbo Stream redirect
       # This will replace the content of 'redirection_target' with a script that redirects
+      puts build_mikrotik_login_url(@transaction)
+
       render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script", locals: { url: build_mikrotik_login_url(@transaction) })
 
-      puts build_mikrotik_login_url(@transaction)
+
       # Or, if you want the whole page to redirect directly, you can use:
       # redirect_to build_mikrotik_login_url(@transaction), status: :see_other # or :found, :temporary_redirect
     else
