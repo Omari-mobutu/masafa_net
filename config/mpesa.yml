@@ -1,8 +1,8 @@
 production:
   environment: production
-  short_code: "4133627"
-  consumer_key: "EnqlCHUlJIe0e7taDLgJ1WeNFtaGaT0It280fOVQ6lXDMnFF"
-  consumer_secret:  "gQnKbJlxXVngqe1WI139gKiH3lGOhkn3jYMxZAMbGPJSUd55pQQDEKpBhIHFWtxG"
+  short_code: "4167417"
+  consumer_key: "ZHZwhQESEzHunurv7BQ9v0VKNrZz4YqLgej5YdS2RY9EvEzA"
+  consumer_secret:  "EGUn7tRV2ZPPf3O6FG2xa1aIsYqRXA64yjocVJaTEw35gTjpJ7MBLswuCIWeVNs2"
   api_key: <%= ENV["MPESA_API_KEY"]%>
   callback_url: "https://net.yurento.com/webhooks/mpesa"
   api_url: "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
