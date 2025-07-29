@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  # get "client_sessions/index"
   root "home#index"
 
   # get "radprofile/new"
@@ -14,6 +15,11 @@ Rails.application.routes.draw do
   # M-Pesa callback endpoint (this needs to be publicly accessible)
   resources :radprofile, param: :group_name
   post "radprofile", to: "radprofile#create"
+  resources :client_sessions, only: [ :index ] do
+    collection do
+      get :refresh # Route for the auto-refresh endpoint
+    end
+  end
 
   # the route for mpesa API
   post "/webhooks/mpesa", to: "payments#create"

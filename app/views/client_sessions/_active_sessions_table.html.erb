@@ -1,0 +1,70 @@
+<%# app/views/client_sessions/_active_sessions_table.html.erb %>
+
+<% if @active_sessions.any? %>
+  <div class="space-y-3"> <%# Container for all session cards %>
+
+    <%# HEADER ROW for the Flexbox Layout %>
+    <div class="hidden md:flex flex-wrap items-center bg-blue-600 text-white rounded-lg p-3 shadow-sm">
+      <div class="flex-[1_1_20%] font-semibold">Username</div>
+      <div class="flex-[1_1_15%] font-semibold">NAS IP</div>
+      <div class="flex-[1_1_15%] font-semibold">Started</div>
+      <div class="flex-[1_1_15%] font-semibold">Duration</div>
+      <div class="flex-[1_1_10%] font-semibold">Data In</div>
+      <div class="flex-[1_1_10%] font-semibold">Data Out</div>
+      <div class="flex-[1_1_15%] font-semibold text-center">Session ID</div>
+    </div>
+
+    <% @active_sessions.each do |session| %>
+      <div class="each_session_card flex flex-wrap items-center bg-gray-50 dark:bg-gray-700 gap-y-1.5 py-3 px-4 rounded-lg border-b border-gray-100 dark:border-gray-600 last:border-b-0 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-600 transition duration-150 ease-in-out">
+
+        <%# Username and Status (visible on all screen sizes) %>
+        <div class="flex-[1_1_100%] md:flex-[1_1_20%] font-bold text-blue-600 dark:text-blue-300 flex items-center gap-2">
+          <%= session[:username] %>
+          <span class="md:hidden inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100">
+            Active
+          </span>
+          <%# Description/Client Info (e.g., Client MAC) %>
+          <div class="basis-full max-w-full text-gray-700 dark:text-gray-200 font-normal text-xs">
+            Client MAC: <%= session[:calling_station_id].presence || 'N/A' %>
+          </div>
+        </div>
+
+        <%# NAS IP Address %>
+        <div class="flex-[1_1_50%] md:flex-[1_1_15%] text-gray-700 dark:text-gray-200 order-2 md:order-none">
+          <span class="md:hidden font-semibold text-gray-500 dark:text-gray-400">NAS: </span><%= session[:nas_ip_address] %>
+        </div>
+
+        <%# Session Start Time %>
+        <div class="flex-[1_1_50%] md:flex-[1_1_15%] text-gray-700 dark:text-gray-200 order-3 md:order-none">
+          <span class="md:hidden font-semibold text-gray-500 dark:text-gray-400">Started: </span><%= session[:acct_start_time]&.strftime('%H:%M:%S %d/%m') %>
+        </div>
+
+        <%# Session Duration %>
+        <div class="flex-[1_1_50%] md:flex-[1_1_15%] text-gray-700 dark:text-gray-200 order-4 md:order-none">
+          <span class="md:hidden font-semibold text-gray-500 dark:text-gray-400">Duration: </span><%= distance_of_time_in_words(session[:acct_start_time], Time.current) %>
+        </div>
+
+        <%# Data In %>
+        <div class="flex-[1_1_50%] md:flex-[1_1_10%] text-gray-700 dark:text-gray-200 order-5 md:order-none">
+          <span class="md:hidden font-semibold text-gray-500 dark:text-gray-400">In: </span><%= number_to_human_size(session[:acct_input_octets]) %>
+        </div>
+
+        <%# Data Out %>
+        <div class="flex-[1_1_50%] md:flex-[1_1_10%] text-gray-700 dark:text-gray-200 order-6 md:order-none">
+          <span class="md:hidden font-semibold text-gray-500 dark:text-gray-400">Out: </span><%= number_to_human_size(session[:acct_output_octets]) %>
+        </div>
+
+        <%# Session ID (hidden on small screens, centered on md and larger) %>
+        <div class="flex-[1_1_100%] md:flex-[1_1_15%] text-gray-500 dark:text-gray-400 text-xs text-left md:text-center order-7 md:order-none">
+          <span class="md:hidden font-semibold text-gray-500 dark:text-gray-400">ID: </span><%= session[:acct_session_id] %>
+        </div>
+
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="text-center py-8 text-gray-600 dark:text-gray-300">
+    <p>No active sessions found.</p>
+    <p class="text-sm mt-2">Make sure users are authenticating and accounting updates are being sent from your NAS.</p>
+  </div>
+<% end %>
