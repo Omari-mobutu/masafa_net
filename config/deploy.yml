@@ -110,7 +110,7 @@ builder:
 accessories:
   database:
     image: pgvector/pgvector:pg16
-    host: 192.168.2.11
+    host: 192.168.11.11
     env:
       clear:
         POSTGRES_USER: "deploy"
