@@ -102,6 +102,9 @@ class HotspotController < ApplicationController
     if @transaction.successful? && @transaction.username.present?
       # If payment and provisioning are done, redirect immediately
       # This might happen if the callback was super fast or on a refresh
+      UpdatePaymentTransactionPostAuthStatusJob.set(wait: 12.seconds).perform_later(@transaction.id)
+      Rails.logger.info "Enqueued UpdatePaymentTransactionPostAuthStatusJob for #{ @payment_transaction.id } with 5-second delay."
+      # Redirect user to the hotspot authentication page
       # Pass the generated username/password to MikroTik's login URL
       redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
       # redirect_to initiate_login_url(transaction_id: @transaction.id)
