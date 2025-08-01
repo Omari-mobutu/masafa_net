@@ -25,13 +25,21 @@ class HotspotController < ApplicationController
     end
 
     if @gift
-      render :gift
+     redirect_to gift_hotspot_index_path
     end
 
     # Fetch available subscriptions from your Rails DB
     @subscriptions = Subscription.all.order(:price)
 
     # Render the view where the user chooses a subscription and enters phone number
+  end
+
+  def gift
+    @client_mac = session[:client_mac]
+    @client_ip = session[:client_ip]
+    @link_login = session[:link_login]
+
+    @gift = GiftedSubscription.find_by(mac_address: @client_mac, redeemed_at: nil)
   end
 
   # the logic for user to reem their gifts
@@ -43,11 +51,13 @@ class HotspotController < ApplicationController
     @gift = GiftedSubscription.find_by(mac_address: @client_mac, redeemed_at: nil)
 
     if @gift
-
       # 2. Update the gift record to prevent future use
-      @gift.update(redeemed_at: Time.current)
+      # @gift.update(redeemed_at: Time.current)
+      UpdateGiftRedemptionJob.set(wait: 5.seconds).perform_later(@gift.id)
 
       # 3. Redirect the user to log in
+      puts @gift.username
+      puts @gift.password
       # This URL should be the redirect URL provided by your Radius server upon successful login
       redirect_to build_mikrotik_gift_login_url(@gift.username, @gift.password, @link_login), allow_other_host: true, status: :see_other
     else
@@ -203,7 +213,10 @@ class HotspotController < ApplicationController
 
   def build_mikrotik_gift_login_url(username, password, link_login)
     link_login_base = link_login.split("?").first
-    "#{link_login_base}?username=#{URI.encode_www_form_component(username)}&password=#{URI.encode_www_form_component(password)}&dst=#{URI.encode_www_form_component(link_login.split('dst=')[1])}"
+
+    puts "the redirection link is:: #{link_login_base}"
+    puts Radprofile::GetPassword.new(username).call
+    "#{link_login_base}?username=#{URI.encode_www_form_component(username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(username).call)}&dst=#{URI.encode_www_form_component(link_login.split('dst=')[1])}"
   end
 
   def hotspot_params
