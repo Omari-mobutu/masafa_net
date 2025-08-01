@@ -7,6 +7,7 @@ class HotspotController < ApplicationController
     @client_mac = params[:mac] || session[:client_mac]
     @client_ip = params[:ip] || session[:client_ip]
     @link_login = params[:"link-login"] || session[:link_login] # Essential for final redirect back to MikroTik
+    @gift = GiftedSubscription.find_by(mac_address: params[:mac], redeemed_at: nil)
 
 
     # Store essential MikroTik context in the session
@@ -23,12 +24,35 @@ class HotspotController < ApplicationController
       return render plain: "Error: Missing client data", status: :bad_request
     end
 
-
+    if @gift
+      render :gift
+    end
 
     # Fetch available subscriptions from your Rails DB
     @subscriptions = Subscription.all.order(:price)
 
     # Render the view where the user chooses a subscription and enters phone number
+  end
+
+  # the logic for user to reem their gifts
+  def redeem_gift
+    @client_mac = session[:client_mac]
+    @client_ip = session[:client_ip]
+    @link_login = session[:link_login]
+
+    @gift = GiftedSubscription.find_by(mac_address: @client_mac, redeemed_at: nil)
+
+    if @gift
+
+      # 2. Update the gift record to prevent future use
+      @gift.update(redeemed_at: Time.current)
+
+      # 3. Redirect the user to log in
+      # This URL should be the redirect URL provided by your Radius server upon successful login
+      redirect_to build_mikrotik_gift_login_url(@gift.username, @gift.password, @link_login), allow_other_host: true, status: :see_other
+    else
+      redirect_to hotspot_new_path, alert: "This gift has already been redeemed or is invalid."
+    end
   end
 
   # This action handles the form submission where the user selects a subscription
@@ -161,7 +185,7 @@ class HotspotController < ApplicationController
   def build_mikrotik_login_url(transaction)
     # MikroTik's login URL (e.g., http://192.168.88.1/login)
     link_login_base = transaction.link_login.split("?").first # Get base URL if it had extra params
-    puts "the lick to redirect #{link_login_base}"
+    puts "the redirection link is:: #{link_login_base}"
     puts Radprofile::GetPassword.new(transaction.username).call
 
     # Construct the final login URL with username/password
@@ -175,6 +199,11 @@ class HotspotController < ApplicationController
     # If using /login?chap-id=... /login?chap-challenge=...
     # you might need to auto-submit a form via JS, or direct user to log in manually.
     # The simplest is if MikroTik accepts username/password directly in query params for auto-login.
+  end
+
+  def build_mikrotik_gift_login_url(username, password, link_login)
+    link_login_base = link_login.split("?").first
+    "#{link_login_base}?username=#{URI.encode_www_form_component(username)}&password=#{URI.encode_www_form_component(password)}&dst=#{URI.encode_www_form_component(link_login.split('dst=')[1])}"
   end
 
   def hotspot_params

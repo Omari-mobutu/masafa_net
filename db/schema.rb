@@ -10,9 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_104812) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_130304) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "gifted_subscriptions", force: :cascade do |t|
+    t.string "mac_address"
+    t.string "package_name"
+    t.datetime "redeemed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "username"
+    t.string "password"
+  end
 
   create_table "nas", id: :serial, force: :cascade do |t|
     t.text "nasname", null: false

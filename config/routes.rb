@@ -11,6 +11,11 @@ Rails.application.routes.draw do
   get "/hotspot/waiting", to: "hotspot#waiting", as: :hotspot_waiting # For payment waiting page
   get "/hotspot/payment_status", to: "hotspot#payment_status", as: :hotspot_payment_status
   get "initiate_login", to: "hotspot#initiate_login", as: :initiate_login
+  resources :hotspot do
+    # ... other routes ...
+    get :gift, on: :collection
+    get :redeem_gift, on: :collection
+  end
 
   # M-Pesa callback endpoint (this needs to be publicly accessible)
   resources :radprofile, param: :group_name

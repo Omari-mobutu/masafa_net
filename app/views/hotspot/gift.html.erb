@@ -1,0 +1,8 @@
+<div class="text-center p-6">
+  <h1 class="text-2xl font-bold mb-4">Congratulations!</h1>
+  <p class="text-lg mb-6">
+    As a valued customer, we have gifted you with a <%= @gift.package_name %>.
+    Enjoy your internet access on us!
+  </p>
+  <%= link_to "Claim Your Gift and Go Online", redeem_gift_hotspot_index_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" %>
+</div>
