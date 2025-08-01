@@ -1,47 +1,70 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-  <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-    <h1 class="text-2xl font-bold text-center text-gray-100 mb-6">Welcome to Centerline Hotspot!</h1>
+<div class="min-h-screen flex items-center justify-center"> <%# Example dark background %>
+  <div class="bg-white p-8 rounded-xl shadow-2xl w-full md:max-w-lg lg:max-w-xl
+              dark:bg-gray-900"> <%# Dark background for the card %>
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-8 leading-tight
+               dark:text-gray-100"> <%# Dark text for heading %>
+      Welcome to <span class="text-blue-600 dark:text-blue-500">Centerline Hotspot!</span>
+    </h1>
 
     <% if flash[:alert] %>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6"
+           role="alert">
         <span class="block sm:inline"><%= flash[:alert] %></span>
       </div>
+      <%# You'd need dark: classes for these too if their colors change in dark mode %>
     <% end %>
     <% if flash[:notice] %>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6"
+           role="alert">
         <span class="block sm:inline"><%= flash[:notice] %></span>
+      </div>
+      <%# You'd need dark: classes for these too if their colors change in dark mode %>
+    <% end %>
+    <%# New: Display flash message passed via URL parameter for Turbo Stream redirects %>
+    <% if params[:flash_alert].present? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <span class="block sm:inline"><%= params[:flash_alert] %></span>
       </div>
     <% end %>
 
-    <p class="text-gray-400 text-center mb-6">Choose a plan to get online.</p>
+    <p class="text-gray-700 text-center mb-8 text-lg dark:text-gray-300">Choose a plan to get online instantly.</p>
 
-    <%= form_with url: hotspot_choose_subscription_path, scope: :hotspot, method: :post, local: true, class: "space-y-4" do |form| %>
+    <%= form_with url: hotspot_choose_subscription_path, scope: :hotspot, method: :post, local: true, class: "space-y-6" do |form| %>
       <%# Hidden fields to pass context from MikroTik %>
-      <%#= form.hidden_field :mac, value: @client_mac %>
-      <%#= form.hidden_field :ip, value: @client_ip %>
-      <%#= form.hidden_field :"link-login", value: @link_login %> <%# MikroTik specific param name %>
+      <%= form.hidden_field :mac, value: @client_mac %>
+      <%= form.hidden_field :ip, value: @client_ip %>
+      <%= form.hidden_field :"link-login", value: @link_login %> <%# MikroTik specific param name %>
       <%#= form.hidden_field :auth_token, value: @auth_token %>
-
       <div class="mb-4">
-        <label for="subscription_id" class="block text-gray-200 text-sm font-bold mb-2">Select your plan:</label>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <label for="subscription_id" class="block text-gray-800 text-base font-semibold mb-3 dark:text-gray-100">Select your plan:</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           <% @subscriptions.each do |subscription| %>
-            <label class="block bg-white border border-gray-300 rounded-lg p-4 cursor-pointer hover:border-blue-500 transition-all duration-200">
-              <input type="radio" name="hotspot[subscription_id]" value="<%= subscription.id %>" class="form-radio h-4 w-4 text-blue-600 focus:ring-blue-500" required>
-              <span class="ml-2 text-gray-100 font-semibold"><%= subscription.name %></span>
-              <p class="text-gray-400 text-sm"><%= subscription.description %></p>
-              <p class="text-lg font-bold text-blue-700 mt-2">Ksh <%= number_with_precision(subscription.price, precision: 2) %></p>
+            <label class="group relative block bg-white border-2 border-gray-200 rounded-xl p-5 cursor-pointer
+                          hover:border-blue-500 transition-all duration-300 ease-in-out
+                          has-[:checked]:ring-2 has-[:checked]:ring-blue-600 has-[:checked]:border-blue-600 has-[:checked]:shadow-lg
+                          dark:bg-gray-800 dark:border-gray-700 dark:hover:border-blue-500
+                          dark:has-[:checked]:ring-blue-500 dark:has-[:checked]:border-blue-500">
+              <input type="radio" name="hotspot[subscription_id]" value="<%= subscription.id %>"
+                     class="form-radio absolute top-3 right-3 h-5 w-5 text-blue-600 focus:ring-blue-500
+                            dark:text-blue-500 dark:focus:ring-blue-400" required>
+              <div class="flex flex-col">
+                <span class="text-gray-900 font-bold text-xl mb-1 dark:text-gray-100"><%= subscription.name %></span>
+                <p class="text-gray-600 text-sm mb-2 leading-snug dark:text-gray-400"><%= subscription.description %></p>
+                <p class="text-2xl font-extrabold text-blue-700 mt-auto dark:text-blue-400">Ksh <%= number_with_precision(subscription.price, precision: 2) %></p>
+              </div>
             </label>
           <% end %>
         </div>
       </div>
 
       <div class="mb-6">
-        <label for="phone_number" class="block text-gray-200 text-sm font-bold mb-2">
+        <label for="phone_number" class="block text-gray-800 text-base font-semibold mb-3 dark:text-gray-100">
           M-Pesa Phone Number (2547XXXXXXXX):
         </label>
         <%= form.text_field :phone_number,
-                            class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-200 leading-tight focus:outline-none focus:shadow-outline focus:border-blue-500",
+                            class: "shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+                                    dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-400",
                             placeholder: "e.g., 0712345678 or 0123456789",
                             pattern: "0[71][0-9]{8}",
                             title: "Please enter a valid M-Pesa phone number (07XXXXXXXX or 01XXXXXXXX)",
@@ -49,7 +72,11 @@
       </div>
 
       <div class="flex items-center justify-center">
-        <%= form.submit "Pay & Get Online", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer w-full" %>
+        <%= form.submit "Pay & Get Online",
+                        class: "w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800
+                                text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                                focus:ring-offset-2 cursor-pointer transition-all duration-300 ease-in-out text-lg shadow-md
+                                dark:from-blue-700 dark:to-blue-800 dark:hover:from-blue-800 dark:hover:to-blue-900 dark:focus:ring-blue-400" %>
       </div>
     <% end %>
   </div>

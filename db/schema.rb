@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_30_092508) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_104812) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -56,6 +56,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_30_092508) do
     t.string "post_auth_status", default: "pending_auth", null: false
     t.datetime "authenticated_at"
     t.datetime "expected_stop_time"
+    t.integer "mpesa_result_code"
+    t.string "mpesa_result_desc"
     t.index ["expected_stop_time"], name: "index_payment_transactions_on_expected_stop_time"
     t.index ["mpesa_checkout_request_id"], name: "index_payment_transactions_on_mpesa_checkout_request_id", unique: true
     t.index ["post_auth_status"], name: "index_payment_transactions_on_post_auth_status"

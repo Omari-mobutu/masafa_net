@@ -8,11 +8,18 @@ class PaymentJob < ApplicationJob
 
 
     result_code = payment_payload.dig(:Body, :stkCallback, :ResultCode)
+    result_desc = payment_payload.dig(:Body, :stkCallback, :ResultDesc)
     checkout_request_id = payment_payload.dig(:Body, :stkCallback, :CheckoutRequestID)
 
     @transaction = PaymentTransaction.find_by(mpesa_checkout_request_id: checkout_request_id)
     # return unless transaction.present?
-    unless @transaction
+    if @transaction
+      @transaction.update(
+        mpesa_result_code: result_code,
+        mpesa_result_desc: result_desc,
+      )
+      Rails.logger.info "M-Pesa callback processed for transaction #{@transaction.id}: ResultCode #{result_code}, Desc: #{result_desc}"
+    else
       Rails.logger.warn "M-Pesa Callback: Transaction not found for CheckoutRequestID: #{checkout_request_id}"
       return
     end

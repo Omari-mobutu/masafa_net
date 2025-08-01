@@ -102,8 +102,8 @@ class HotspotController < ApplicationController
     if @transaction.successful? && @transaction.username.present?
       # If payment and provisioning are done, redirect immediately
       # This might happen if the callback was super fast or on a refresh
-      # UpdatePaymentTransactionPostAuthStatusJob.set(wait: 12.seconds).perform_later(@transaction.id)
-      # Rails.logger.info "Enqueued UpdatePaymentTransactionPostAuthStatusJob for #{ @payment_transaction.id } with 5-second delay."
+      UpdatePaymentTransactionPostAuthStatusJob.set(wait: 12.seconds).perform_later(@transaction.id)
+      Rails.logger.info "Enqueued UpdatePaymentTransactionPostAuthStatusJob for #{ @payment_transaction.id } with 12-seconds delay."
       # Redirect user to the hotspot authentication page
       # Pass the generated username/password to MikroTik's login URL
       redirect_to build_mikrotik_login_url(@transaction), allow_other_host: true, status: :see_other
@@ -144,9 +144,14 @@ class HotspotController < ApplicationController
 
       # Or, if you want the whole page to redirect directly, you can use:
       # redirect_to build_mikrotik_login_url(@transaction), status: :see_other # or :found, :temporary_redirect
+    elsif @transaction && @transaction.failed?
+      render turbo_stream: turbo_stream.replace("redirection_target", partial: "hotspot/redirect_script",
+        locals: { url: hotspot_new_path(flash_alert: @transaction.mpesa_error_message) }
+      )
+
     else
       # Still pending or failed, render an empty frame or just status text
-      render turbo_stream: turbo_stream.update("payment_status", "<p class='text-blue-500'>Still pending ayee...</p>")
+      render turbo_stream: turbo_stream.update("payment_status", "<p class='text-blue-500'>Still pending please wait...</p>")
     end
   end
 
