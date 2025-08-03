@@ -24,6 +24,14 @@ class HotspotController < ApplicationController
       return render plain: "Error: Missing client data", status: :bad_request
     end
 
+    # re-authenticate the user back to his sessions
+    active_session = active_session_for_mac(@client_mac)
+    if active_session
+      # Re-authenticate the user immediately
+      flash.now[:notice] = "Welcome back! Your session is still active."
+      redirect_to build_mikrotik_login_url(active_session), allow_other_host: true, status: :see_other
+    end
+
     if @gift
      redirect_to gift_hotspot_index_path
     end
@@ -217,6 +225,14 @@ class HotspotController < ApplicationController
     puts "the redirection link is:: #{link_login_base}"
     puts Radprofile::GetPassword.new(username).call
     "#{link_login_base}?username=#{URI.encode_www_form_component(username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(username).call)}&dst=#{URI.encode_www_form_component(link_login.split('dst=')[1])}"
+  end
+
+  def active_session_for_mac(mac_address)
+    PaymentTransaction
+      .where(post_auth_status: "success", client_mac: mac_address)
+      .where("expected_stop_time > ?", Time.current)
+      .order(expected_stop_time: :desc)
+      .first
   end
 
   def hotspot_params
