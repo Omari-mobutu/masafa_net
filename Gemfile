@@ -73,3 +73,5 @@ gem "jwt", "~> 3.0"
 gem "activerecord-session_store"
 # perform http api request
 gem "httparty", "~> 0.23.1"
+# adding A/B testing features
+gem "field_test"

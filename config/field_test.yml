@@ -1,0 +1,14 @@
+experiments:
+  button_color:
+    variants:
+      - red
+      - green
+      - blue
+  subscription_form:
+    variants:
+      - orginal
+      - new_design
+    # winner: green
+
+exclude:
+  bots: true

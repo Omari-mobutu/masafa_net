@@ -142,6 +142,8 @@ class HotspotController < ApplicationController
     # or rely purely on the M-Pesa callback.
     # # Check status. If successful, prepare for redirect
     if @transaction.successful? && @transaction.username.present?
+      # record which form was used for user
+      field_test_converted("subscription_form")
       # If payment and provisioning are done, redirect immediately
       # This might happen if the callback was super fast or on a refresh
       UpdatePaymentTransactionPostAuthStatusJob.set(wait: 12.seconds).perform_later(@transaction.id)

@@ -99,6 +99,7 @@ GEM
       msgpack (~> 1.2)
     brakeman (7.0.2)
       racc
+    browser (6.2.0)
     builder (3.3.0)
     capybara (3.40.0)
       addressable
@@ -132,6 +133,11 @@ GEM
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
+    field_test (0.8.0)
+      activerecord (>= 7.1)
+      browser (>= 2)
+      railties (>= 7.1)
+      rice (>= 4.3.3)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -287,6 +293,7 @@ GEM
     reline (0.6.1)
       io-console (~> 0.5)
     rexml (3.4.1)
+    rice (4.6.1)
     rubocop (1.77.0)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -411,6 +418,7 @@ DEPENDENCIES
   capybara
   debug
   erb_lint
+  field_test
   httparty (~> 0.23.1)
   importmap-rails
   jbuilder
