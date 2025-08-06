@@ -95,6 +95,16 @@ class HotspotController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
+    # --- Phone Number Format Validation ---
+    # Define the regex pattern for Kenyan M-Pesa numbers starting with 07 or 01
+    phone_number_regex = /\A0[71][0-9]{8}\z/
+
+    unless @phone_number =~ phone_number_regex
+      flash[:alert] = "Invalid phone number format. Please enter a valid M-Pesa number (e.g., 07XXXXXXXX or 01XXXXXXXX)."
+      @subscriptions = Subscription.all.order(:price) # Re-fetch for re-render
+      return render :new, status: :unprocessable_entity
+    end
+
     # --- Initiate M-Pesa Payment ---
     # You'll call your M-Pesa service here. This service will:
     # 1. Store a pending payment record in your `payment_transactions` table
