@@ -119,6 +119,10 @@ class HotspotController < ApplicationController
     @push = @payment.push
 
     if @push [:success]
+      # record which form was used for user
+      field_test_converted("subscription_form")
+      # then record the push notification properties
+
       transaction = PaymentTransaction.create!(
       subscription_id: @chosen_subscription.id,
       phone_number: @phone_number,
@@ -152,8 +156,7 @@ class HotspotController < ApplicationController
     # or rely purely on the M-Pesa callback.
     # # Check status. If successful, prepare for redirect
     if @transaction.successful? && @transaction.username.present?
-      # record which form was used for user
-      field_test_converted("subscription_form")
+
       # If payment and provisioning are done, redirect immediately
       # This might happen if the callback was super fast or on a refresh
       UpdatePaymentTransactionPostAuthStatusJob.set(wait: 12.seconds).perform_later(@transaction.id)
@@ -244,6 +247,13 @@ class HotspotController < ApplicationController
       .where(post_auth_status: "success", client_mac: mac_address)
       .where("expected_stop_time > ?", Time.current)
       .order(expected_stop_time: :desc)
+      .first
+  end
+  def unauthenticated_session_for_mac(mac_address)
+    PaymentTransaction
+      .where(status: "success", client_mac: mac_address)
+      .where(created_at: Time.zone.now.beginning_of_day..Time.zone.now.end_of_day)
+      .order(created_at: :desc)
       .first
   end
 
