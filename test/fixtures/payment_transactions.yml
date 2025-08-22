@@ -7,10 +7,10 @@ one:
   client_mac: MyString
   client_ip: MyString
   link_login: MyString
-  mpesa_checkout_request_id: MyString
+  mpesa_checkout_request_id: kato
   mpesa_merchant_request_id: MyString
   status: MyString
-  payment_details: 
+  payment_details:
   username: MyString
   password_digest: MyString
   subscription_name: MyString
@@ -22,10 +22,10 @@ two:
   client_mac: MyString
   client_ip: MyString
   link_login: MyString
-  mpesa_checkout_request_id: MyString
+  mpesa_checkout_request_id: mimi
   mpesa_merchant_request_id: MyString
   status: MyString
-  payment_details: 
+  payment_details:
   username: MyString
   password_digest: MyString
   subscription_name: MyString
