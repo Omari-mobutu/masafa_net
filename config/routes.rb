@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "analytics/index"
   get "subscriptions/index"
   get "subscriptions/show"
   get "subscriptions/new"

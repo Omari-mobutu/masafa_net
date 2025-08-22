@@ -1,6 +1,7 @@
 # app/controllers/hotspot_controller.rb
 class HotspotController < ApplicationController
   allow_unauthenticated_access
+
   # Assume this is the landing page after MikroTik redirect
   # e.g., accessible via /hotspot/login or root_path
   def new
@@ -212,6 +213,8 @@ class HotspotController < ApplicationController
       render turbo_stream: turbo_stream.update("payment_status", "<p class='text-blue-500'>Still pending please wait...</p>")
     end
   end
+
+
 
 
   private

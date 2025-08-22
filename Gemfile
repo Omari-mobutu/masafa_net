@@ -75,3 +75,7 @@ gem "activerecord-session_store"
 gem "httparty", "~> 0.23.1"
 # adding A/B testing features
 gem "field_test"
+# adding analytics and visualization features
+gem "ahoy_matey"
+gem "chartkick"
+gem "groupdate"

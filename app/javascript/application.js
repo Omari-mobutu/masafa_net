@@ -3,6 +3,7 @@ import "@hotwired/turbo-rails"
 import "controllers"
 import "flowbite"
 
+
 // Register the custom Turbo Stream action
 // This makes <turbo-stream action="turbo_visit" url="some_path" /> work
 
