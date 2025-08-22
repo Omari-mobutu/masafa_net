@@ -1,6 +1,7 @@
 // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
 import "controllers"
+import "flowbite"
 
 // Register the custom Turbo Stream action
 // This makes <turbo-stream action="turbo_visit" url="some_path" /> work
