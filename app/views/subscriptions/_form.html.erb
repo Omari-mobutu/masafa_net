@@ -1,0 +1,48 @@
+<!-- app/views/subscriptions/_form.html.erb -->
+<%= form_with(model: subscription, class: "space-y-6") do |form| %>
+  <% if subscription.errors.any? %>
+    <div id="error_explanation" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+      <p class="font-bold">
+        <%= pluralize(subscription.errors.count, "error") %> prohibited this subscription from being saved:
+      </p>
+      <ul class="list-disc list-inside mt-2">
+        <% subscription.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.text_field :name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+  </div>
+
+  <div>
+    <%= form.label :description, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.text_area :description, rows: 4, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+  </div>
+
+  <div>
+    <%= form.label :price, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.number_field :price, step: :any, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+  </div>
+
+  <div>
+    <%= form.label :duration_minutes, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.number_field :duration_minutes, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+  </div>
+
+  <div>
+    <%= form.label :freeradius_group_name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.select :freeradius_group_name,
+                  options_for_select(@profiles.map { |profile| [profile[0], profile[0]] }, @subscription.freeradius_group_name),
+                  { include_blank: 'Select a FreeRADIUS profile' },
+                  class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+  </div>
+
+  <div class="flex items-center justify-end gap-4 mt-6">
+    <%= link_to "Cancel", subscriptions_path, class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" %>
+    <%= form.submit class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 cursor-pointer" %>
+  </div>
+<% end %>

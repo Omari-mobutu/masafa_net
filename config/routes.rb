@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  get "subscriptions/index"
+  get "subscriptions/show"
+  get "subscriptions/new"
+  get "subscriptions/create"
+  get "subscriptions/edit"
+  get "subscriptions/destroy"
   resource :session
   resources :passwords, param: :token
   # get "client_sessions/index"
@@ -27,6 +33,8 @@ Rails.application.routes.draw do
       get :refresh # Route for the auto-refresh endpoint
     end
   end
+  # resources for subscription
+  resources :subscriptions
 
   # the route for mpesa API
   post "/webhooks/mpesa", to: "payments#create"

@@ -1,10 +1,14 @@
-<article class="wrapper grid-container py-12" id="existing-customer">
-  <div class="col-span-full md:col-start-5 md:col-span-4">
-    <h1 class="font-serif text-h4 md:text-h3 text-center items-center"> RADIUS Profile: <%= @profile[:group_name] %><br>
-      <span class ="text-blue-600 text-sm"> Update  details</span> </h1>
-  </div>
-  <div>
-    <%=render "edit_form", profile: @profile.to_a %>
-  </div>
-</article>
+<div class="container mx-auto px-4 py-8 max-w-lg">
+  <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+    <div class="text-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        RADIUS Profile: <%= @profile[:group_name] %>
+      </h1>
+      <p class="text-sm font-semibold text-blue-600 dark:text-blue-400 mt-2">
+        Update details
+      </p>
+    </div>
 
+    <%= render "edit_form", profile: @profile %>
+  </div>
+</div>

@@ -1,26 +1,38 @@
-<%= form_with(url: "/radprofile", scope: :radprofile, local: true, class: "contents") do |form| %>
+<div class="container mx-auto px-4 py-8 max-w-lg">
+  <div class="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        Create New RADIUS Profile
+      </h1>
+    </div>
 
-  <div class="my-5">
-    <%= form.label :groupname %>
-    <%= form.text_field :group_name, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+    <%= form_with(url: "/radprofile", scope: :radprofile, local: true, class: "space-y-6") do |form| %>
 
-  <div class="my-5">
-    <%= form.label :rate_limi, "Rate Limit (e.g., 6M/6M)" %>
-    <%= form.text_field :rate_limit, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+      <div>
+        <%= form.label :groupname, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+        <%= form.text_field :group_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+      </div>
 
-  <div class="my-5">
-    <%= form.label :session_timeout, "Session Timeout (seconds)" %>
-    <%= form.text_field :session_timeout, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
-  <div class="my-5">
-    <%= form.label :idle_timeout, "Idle Timeout (seconds)" %>
-    <%= form.text_field :idle_timeout, class: "block shadow rounded-md border border-gray-400 outline-none px-3 py-2 mt-2 w-full" %>
-  </div>
+      <div>
+        <%= form.label :rate_limi, "Rate Limit (e.g., 6M/6M)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+        <%= form.text_field :rate_limit, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+      </div>
 
+      <div>
+        <%= form.label :session_timeout, "Session Timeout (seconds)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+        <%= form.text_field :session_timeout, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+      </div>
 
-  <div class="inline">
-    <%= form.submit "Create Profile", class: "rounded-lg py-3 px-5 bg-blue-600 text-white inline-block font-medium cursor-pointer" %>
+      <div>
+        <%= form.label :idle_timeout, "Idle Timeout (seconds)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+        <%= form.text_field :idle_timeout, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100" %>
+      </div>
+
+      <div class="flex justify-between items-center mt-6">
+        <%= link_to "Back", radprofile_index_path, class: "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" %>
+        <%= form.submit "Create Profile", class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-200 cursor-pointer" %>
+      </div>
+
+    <% end %>
   </div>
-<% end %>
+</div>
