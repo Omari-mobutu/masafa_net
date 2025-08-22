@@ -1,6 +1,102 @@
-    <% variant = field_test("subscription_form") %>
-    <% if variant == "new_design" %>
-      <%= render "variant_A_form"%>
-    <% else %>
-      <%= render "original_subs_form"%>
+<div class="min-h-screen flex items-center justify-center" data-controller="multi-step-form">
+
+  <div class="bg-white p-8 rounded-xl shadow-2xl w-full md:max-w-lg lg:max-w-xl dark:bg-gray-900">
+    <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-gray-800 mb-8 leading-tight dark:text-gray-100">
+      Welcome to <span class="text-blue-600 dark:text-blue-500">Centerline Hotspot!</span>
+    </h1>
+    <p class="text-center text-xl font-semibold text-gray-700 mb-4 dark:text-gray-300">
+      Buy and get online in three quick steps!
+    </p>
+    <p class="text-center text-gray-600 mb-8 dark:text-gray-400">
+        Just select your plan, enter your M-Pesa number, and confirm the payment on your phone. And voila, you are online! 🎉
+    </p>
+
+    <% if flash[:alert] %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+        <span class="block sm:inline"><%= flash[:alert] %></span>
+      </div>
     <% end %>
+    <% if flash[:notice] %>
+      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
+        <span class="block sm:inline"><%= flash[:notice] %></span>
+      </div>
+    <% end %>
+    <% if params[:flash_alert].present? %>
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <span class="block sm:inline"><%= params[:flash_alert] %></span>
+      </div>
+    <% end %>
+
+  <div class="bg-white p-8 rounded-xl shadow-2xl w-full md:max-w-lg lg:max-w-xl dark:bg-gray-900">
+    <%= form_with url: hotspot_choose_subscription_path, scope: :hotspot, method: :post, local: true, class: "space-y-6" do |form| %>
+      <%= form.hidden_field :mac, value: @client_mac %>
+      <%= form.hidden_field :ip, value: @client_ip %>
+      <%= form.hidden_field :"link-login", value: @link_login %>
+
+      <div data-multi-step-form-target="step" data-step="1">
+        <label for="subscription_id" class="block text-gray-800 text-base font-semibold mb-3 dark:text-gray-100">Select your plan:</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <% @subscriptions.each do |subscription| %>
+            <label class="group relative block bg-white border-2 border-gray-200 rounded-xl p-5 cursor-pointer
+                          hover:border-blue-500 transition-all duration-300 ease-in-out
+                          has-[:checked]:ring-2 has-[:checked]:ring-blue-600 has-[:checked]:border-blue-600 has-[:checked]:shadow-lg
+                          dark:bg-gray-800 dark:border-gray-700 dark:hover:border-blue-500
+                          dark:has-[:checked]:ring-blue-500 dark:has-[:checked]:border-blue-500">
+              <input type="radio" name="hotspot[subscription_id]" value="<%= subscription.id %>"
+                     class="form-radio absolute top-3 right-3 h-5 w-5 text-blue-600 focus:ring-blue-500
+                            dark:text-blue-500 dark:focus:ring-blue-400" required
+                     data-action="change->multi-step-form#nextStep">
+              <div class="flex flex-col">
+                <span class="text-gray-900 font-bold text-xl mb-1 dark:text-gray-100"><%= subscription.name %></span>
+                <p class="text-gray-600 text-sm mb-2 leading-snug dark:text-gray-400"><%= subscription.description %></p>
+                <p class="text-2xl font-extrabold text-blue-700 mt-auto dark:text-blue-400">Ksh <%= number_with_precision(subscription.price, precision: 2) %></p>
+              </div>
+            </label>
+          <% end %>
+        </div>
+      </div>
+
+      <div data-multi-step-form-target="step" data-step="2" class="hidden">
+        <button type="button" class="text-blue-600 hover:underline dark:text-blue-400" data-action="click->multi-step-form#previousStep">
+            &larr; Back to Plans
+          </button>
+        <div class="mb-6">
+          <label for="phone_number" class="block text-gray-800 text-base font-semibold mb-3 dark:text-gray-100">
+            M-Pesa Phone Number (07XXXXXXXX):
+          </label>
+          <%= form.text_field :phone_number,
+                              class: "shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-800 leading-tight
+                                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200
+                                      dark:bg-gray-700 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:ring-blue-400",
+                              placeholder: "e.g., 0712345678 or 0123456789",
+                              pattern: "0[71][0-9]{8}",
+                              title: "Please enter a valid M-Pesa phone number (07XXXXXXXX or 01XXXXXXXX)",
+                              required: true %>
+        </div>
+        <div class="flex items-center justify-between">
+
+          <%= form.submit "Send Payment Request",
+                          class: "w-full md:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800
+                                  text-white font-bold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500
+                                  focus:ring-offset-2 cursor-pointer transition-all duration-300 ease-in-out text-lg shadow-md
+                                  dark:from-blue-700 dark:to-blue-800 dark:hover:from-blue-800 dark:hover:to-blue-900 dark:focus:ring-blue-400" %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <h2 class="text-lg font-semibold text-center text-gray-800 mb-4 dark:text-gray-100">
+        You can access these sites for free:
+      </h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-items-center">
+        <a href="https://yurento.com" target="_blank" class="hover:opacity-75 transition-opacity">
+          <%= image_tag "yurento_logo.svg", class: "h-24 w-24", alt: "Google" %>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+  </div>
+</div>
