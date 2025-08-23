@@ -1,6 +1,7 @@
 class PaymentsController < ApplicationController
   # before_action :authenticate_user!, only: %i[index show destroy]
   # before_action :check_if_admin, only: %i[index show destroy]
+  allow_unauthenticated_access
   before_action :set_payment, only: %i[show destroy]
   skip_forgery_protection only: [ :create ]
 
