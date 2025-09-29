@@ -28,10 +28,21 @@ class HotspotController < ApplicationController
 
     # re-authenticate the user back to his sessions
     active_session = active_session_for_mac(@client_mac)
+    # if active_session
+    # Re-authenticate the user immediately
+    # flash.now[:notice] = "Welcome back! Your session is still active."
+    # redirect_to build_mikrotik_login_url(active_session), allow_other_host: true, status: :see_other
+    # end
+    # the new active session checker and relogin action
     if active_session
-      # Re-authenticate the user immediately
-      flash.now[:notice] = "Welcome back! Your session is still active."
-      redirect_to build_mikrotik_login_url(active_session), allow_other_host: true, status: :see_other
+      # Prepare data for the view
+      @mikrotik_login_url = build_mikrotik_re_login_url(active_session)
+      @username = active_session.username
+      @password = Radprofile::GetPassword.new(@username).call
+      @session_timeout = calculate_session_timeout(active_session)
+
+      # Render a specific view for re-login
+      render "relogin"
     end
 
     if @gift
@@ -238,6 +249,24 @@ class HotspotController < ApplicationController
     # The simplest is if MikroTik accepts username/password directly in query params for auto-login.
   end
 
+  # biuld the re_login url
+  def build_mikrotik_re_login_url(transaction)
+    # MikroTik's login URL (e.g., http://192.168.88.1/login)
+    link_login_base = transaction.link_login.split("?").first
+
+    # Extract the original destination URL from the transaction link
+    # (assuming it exists in a 'dst' parameter)
+    original_dst = transaction.link_login.split("dst=")[1]
+
+    # Calculate the remaining session time in seconds
+    session_timeout = calculate_session_timeout(transaction)
+
+    # Construct the final redirect URL with the necessary parameters
+    # The username and password are not in this URL. The MikroTik is expecting a POST
+    # which a JS redirect form will create
+    "#{link_login_base}?dst=#{URI.encode_www_form_component(original_dst)}&session-timeout=#{session_timeout}"
+  end
+
   def build_mikrotik_gift_login_url(username, password, link_login)
     link_login_base = link_login.split("?").first
 
@@ -253,6 +282,13 @@ class HotspotController < ApplicationController
       .order(expected_stop_time: :desc)
       .first
   end
+
+  # the code to calculate the remaining session for a user relogin
+  def calculate_session_timeout(transaction)
+    remaining_time = transaction.expected_stop_time - Time.current
+    [ remaining_time.to_i, 0 ].max # Ensure time is not negative
+  end
+
   def unauthenticated_session_for_mac(mac_address)
     PaymentTransaction
       .where(status: "success", client_mac: mac_address)

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redirecting...</title>
+  <script type="text/javascript">
+    // Auto-submit the form as soon as the page loads
+    window.onload = function() {
+      document.getElementById('mikrotik_form').submit();
+    };
+  </script>
+</head>
+<body>
+  <h1>Welcome back! Your session is still active.</h1>
+  <p>You are being redirected to a secure login page. If nothing happens, please click the button below.</p>
+
+  <form id="mikrotik_form" action="<%= @mikrotik_login_url %>" method="post">
+    <input type="hidden" name="username" value="<%= @username %>" />
+    <input type="hidden" name="password" value="<%= @password %>" />
+    <input type="hidden" name="session-timeout" value="<%= @session_timeout %>" />
+    <input type="submit" value="Click here to continue" />
+  </form>
+</body>
+</html>
