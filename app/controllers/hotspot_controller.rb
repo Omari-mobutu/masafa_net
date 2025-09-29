@@ -242,8 +242,9 @@ class HotspotController < ApplicationController
 
   # biuld the re_login url
   def build_mikrotik_re_login_url(transaction)
+    @link_login = session[:link_login]
     # MikroTik's login URL (e.g., http://192.168.88.1/login)
-    link_login_base = transaction.link_login.split("?").first
+    link_login_base = @link_login .split("?").first
 
     # Extract the original destination URL from the transaction link
     # (assuming it exists in a 'dst' parameter)
