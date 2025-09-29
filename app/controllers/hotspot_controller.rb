@@ -28,22 +28,13 @@ class HotspotController < ApplicationController
 
     # re-authenticate the user back to his sessions
     active_session = active_session_for_mac(@client_mac)
-    # if active_session
-    # Re-authenticate the user immediately
-    # flash.now[:notice] = "Welcome back! Your session is still active."
-    # redirect_to build_mikrotik_login_url(active_session), allow_other_host: true, status: :see_other
-    # end
-    # the new active session checker and relogin action
     if active_session
-      # Prepare data for the view
-      @mikrotik_login_url = build_mikrotik_re_login_url(active_session)
-      @username = active_session.username
-      @password = Radprofile::GetPassword.new(@username).call
-      @session_timeout = calculate_session_timeout(active_session)
-
-      # Render a specific view for re-login
-      render "relogin"
+      # Re-authenticate the user immediately
+      flash.now[:notice] = "Welcome back! Your session is still active."
+      redirect_to build_mikrotik_re_login_url(active_session), allow_other_host: true, status: :see_other
     end
+    # the new active session checker and relogin action
+
 
     if @gift
      redirect_to gift_hotspot_index_path
@@ -264,7 +255,8 @@ class HotspotController < ApplicationController
     # Construct the final redirect URL with the necessary parameters
     # The username and password are not in this URL. The MikroTik is expecting a POST
     # which a JS redirect form will create
-    "#{link_login_base}?dst=#{URI.encode_www_form_component(original_dst)}&session-timeout=#{session_timeout}"
+    # "#{link_login_base}?dst=#{URI.encode_www_form_component(original_dst)}&session-timeout=#{session_timeout}"
+    "#{link_login_base}?username=#{URI.encode_www_form_component(transaction.username)}&password=#{URI.encode_www_form_component(Radprofile::GetPassword.new(transaction.username).call)}&dst=#{URI.encode_www_form_component(transaction.link_login.split('dst=')[1])}&session-timeout=#{session_timeout}"
   end
 
   def build_mikrotik_gift_login_url(username, password, link_login)
